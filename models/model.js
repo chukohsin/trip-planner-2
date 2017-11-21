@@ -1,45 +1,77 @@
 const Sequelize = require('sequelize');
-const db = new Sequelize('postgres://localhost:5432/stuff', {
+const db = new Sequelize('postgres://localhost:5432/tripplanner', {
 	logging: false
 })
 
-
-const Stuff = db.define('itinerary', {
+const Activity = db.define('activity', {
 	name: {
 		type: Sequelize.STRING,
 		allowNull: false
 	},
-	lat: {
-		type: Sequelize.DECIMAL,
+	age_range: {
+		type: Sequelize.STRING,
+		allowNull: false
+	}
+})
+
+
+const Restaurant = db.define('restaurant', {
+	name: {
+		type: Sequelize.STRING,
 		allowNull: false
 	},
-	lng: {
-		type: Sequelize.DECIMAL,
-		allowNull: false
+	cuisine: {
+		type: Sequelize.ARRAY(Sequelize.STRING)
 	},
-	coord: {
-		type: Sequelize.VIRTUAL,
-		get () {
-			return [ this.getDataValue('lng'), this.getDataValue('lat')];
+	price: {
+		type: Sequelize.INTEGER,
+		validate: {
+			max: 5,
+			min: 1
 		}
 	}
 	
 })
 
-Stuff.create({
-	name: 'Bouley',
-	lat: 40.741017,
-	lng: -73.991763
-}).then((bouley) => {
-	console.log(bouley);
-}).catch(new Error("NOOOO"))
+const Place = db.define('place', {
+  address: {
+    type: Sequelize.STRING
+  },
+  city: {
+    type: Sequelize.STRING
+  },
+  state: {
+    type: Sequelize.STRING
+  },
+  phone: {
+    type: Sequelize.STRING
+  },
+  location: {
+    type: Sequelize.ARRAY(Sequelize.FLOAT)
+  }
+})
+const Hotel = db.define('hotel', {
+  name: {
+    type: Sequelize.STRING
+  },
+  numStars: {
+    type: Sequelize.FLOAT,
+    validate: {
+			max: 5,
+			min: 1
+		}
+  },
+  amenities: {
+    type: Sequelize.ARRAY(Sequelize.STRING)
+  }
+})
 
-
-
+Hotel.belongsTo(Place);
+Restaurant.belongsTo(Place);
+Activity.belongsTo(Place);
 
 
 
 module.exports = {
 	db: db,
-	Stuff: Stuff
 }
