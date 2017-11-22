@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
-const models = require('../models/model')
+const models = require('./models')
 
 app.use(morgan('dev'));
 
